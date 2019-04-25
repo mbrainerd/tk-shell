@@ -132,8 +132,8 @@ class ShellEngine(Engine):
             t = tk_shell.Task(self, cb, args)
 
             # start up our QApp now, if none is already running
-            qt_application = None
-            if not QtGui.qApp:
+            app = QtGui.QApplication.instance()
+            if app is None:
                 # We need to clear Qt library paths on Linux if KDE is the active environment.
                 # This resolves issues with mismatched Qt libraries between the OS and the
                 # application being launched if it is a DCC that comes with a bundled Qt.
@@ -145,9 +145,6 @@ class ShellEngine(Engine):
                 qt_application.setWindowIcon(QtGui.QIcon(self.icon_256))
                 self._initialize_dark_look_and_feel()
 
-            # if we didn't start the QApplication here, let the responsability
-            # to run the exec loop and quit to the initial creator of the QApplication
-            if qt_application:
                 # when the QApp starts, initialize our task code
                 QtCore.QTimer.singleShot(0, t.run_command)
                 # and ask the main app to exit when the task emits its finished signal
